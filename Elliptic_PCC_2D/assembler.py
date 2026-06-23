@@ -241,7 +241,7 @@ class Assembler:
                                                            basis_functions_values,
                                                            weights)
 
-            k_max = np.max(abs(diffusion_term_values))
+            k_max = float(np.max(abs(diffusion_term_values)))
             local_a_stab = k_max * polydim.pde_tools.local_space_pcc_2_d.stabilization_matrix(reference_element_data, local_space_data)
 
             global_do_fs = do_fs_data.cells_global_do_fs[2][c]
