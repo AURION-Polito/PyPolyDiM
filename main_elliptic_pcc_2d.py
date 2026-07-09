@@ -12,15 +12,17 @@ import cProfile
 def main():
 
     parser =argparse.ArgumentParser()
-    parser.add_argument('-order','--method-order',dest='method_order', default=2, type=int, help="Method order")
-    parser.add_argument('-method','--method-type',dest='method_type', default=1, type=int, help="Method type")
-    parser.add_argument('-test', '--test-id', dest='test_id', default=1, type=int, help="Test type")
-    parser.add_argument('-mesh', '--mesh-type', dest='mesh_type', default=0, type=int, help="Mesh type")
-    parser.add_argument('-tol1', '--tolerance-1-d', dest='tolerance1_d', default=1.0e-12, type=float, help="Geometric Tolerance 1D")
-    parser.add_argument('-tol2', '--tolerance-2-d', dest='tolerance2_d', default=1.0e-14, type=float, help="Geometric Tolerance 2D")
-    parser.add_argument('-area', '--mesh-max-relative-area', dest='max_relative_area', default=0.1, type=float, help="Mesh max relative area")
-    parser.add_argument('-export', '--export-path', dest='export_path', default='./Export/Elliptic_PCC_2D', type=str, help="Export Path")
-    parser.add_argument('-import', '--import-path', dest='import_path', default='./', type=str, help="Mesh Import Path")
+    parser.add_argument('-order','--method-order',dest='method_order', default=1, type=int, help="Method order (Default: 1)")
+    parser.add_argument('-method','--method-type',dest='method_type', default=1, type=int, help="Method type 0 - FEM; 1 - EVem; 2 - EVem_Inertia; 3 - EVem_Ortho; "
+                                           "4 - ZFEM (Default: 0)")
+    parser.add_argument('-test', '--test-id', dest='test_id', default=1, type=int, help="Test type, 1 - EllipticPolynomialProblem (Default: 1)")
+    parser.add_argument('-mesh', '--mesh-type', dest='mesh_type', default=0, type=int, help="Mesh type, 0 - Triangular; 1 - Minimal; 2 - "
+            "Polygonal; 3 - OFF Importer; 4 - CsvImporter (; separator); 5 - Squared; 6 - RandomDistorted (Default: 0)")
+    parser.add_argument('-tol1', '--tolerance-1-d', dest='tolerance1_d', default=1.0e-12, type=float, help="Geometric Tolerance 1D (Default: 1.0e-12)")
+    parser.add_argument('-tol2', '--tolerance-2-d', dest='tolerance2_d', default=1.0e-14, type=float, help="Geometric Tolerance 2D (Default: 1.0e-14)")
+    parser.add_argument('-area', '--mesh-max-relative-area', dest='max_relative_area', default=0.1, type=float, help="Mesh max relative area (Default: 0.1)")
+    parser.add_argument('-export', '--export-path', dest='export_path', default='./Export/Elliptic_PCC_2D', type=str, help="Export Path (Default: ./Export)")
+    parser.add_argument('-import', '--import-path', dest='import_path', default='./', type=str, help="Mesh Import Path (Default: './')")
     args = parser.parse_args()
 
     export_path = args.export_path

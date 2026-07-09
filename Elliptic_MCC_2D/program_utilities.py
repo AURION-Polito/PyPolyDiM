@@ -1,4 +1,4 @@
-from Elliptic_MCC_2D.test_definition import ITest, EllipticPolynomialProblem
+from Elliptic_MCC_2D.test_definition import ITest, EllipticPolynomialProblem, ProblemType
 from pypolydim import gedim, polydim
 from pypolydim.assembler_utilities import assembler_utilities
 from Elliptic_MCC_2D.assembler import Assembler
@@ -50,14 +50,15 @@ def export_errors(file_path: str, test_id: int, mesh_type: int, method_id: int, 
                   post_process_data: Assembler.PostProcessData,
                   file_separator = ';') -> None:
 
-    print("{:<5} {:<5} {:<7} {:<5} {:<10} {:<10} {:<10} {:<10} {:<20} {:<20} {:<20} {:<20} {:<20} {:<20}"
+    print("{:<30} {:<15} {:<10} {:<5} {:<10} {:<10} {:<10} {:<10} {:<20} {:<20} {:<20} {:<20} {:<20} {:<20}"
           .format('Test', 'Mesh', 'Method', 'Order', 'Cell2Ds',
                   'DOFs', 'Strongs', 'h', 'errorL2Pressure',  'errorL2Velocity',
                   'superErrorL2Pressure', 'normL2Pressure', 'normL2Velocity', 'residual'))
 
     print(
-        "{:<5d} {:<5d} {:<7d} {:<5d} {:<10d} {:<10d} {:<10d} {:<10.2e} {:<20.2e} {:<20.2e} {:<20.2e} {:<20.2e} {:<20.2e} {:<20.2e}"
-        .format(test_id, mesh_type, method_id, method_order, mesh.cell2_d_total_number(),
+        "{:<30s} {:<15s} {:<10s} {:<5d} {:<10d} {:<10d} {:<10d} {:<10.2e} {:<20.2e} {:<20.2e} {:<20.2e} {:<20.2e} {:<20.2e} {:<20.2e}"
+        .format(ProblemType(test_id).name, polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_2D(mesh_type).name,
+                polydim.pde_tools.local_space_mcc_2_d.MethodTypes(method_id).name, method_order, mesh.cell2_d_total_number(),
                 count_do_fs_data.num_total_do_fs, count_do_fs_data.num_total_strongs,
                 post_process_data.mesh_size, post_process_data.error_l2_pressure, post_process_data.error_l2_velocity, post_process_data.super_error_l2_pressure,
                 post_process_data.norm_l2_pressure, post_process_data.norm_l2_velocity, post_process_data.residual_norm))

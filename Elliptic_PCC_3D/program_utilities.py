@@ -1,4 +1,4 @@
-from Elliptic_PCC_3D.test_definition import ITest, EllipticPolynomialProblem
+from Elliptic_PCC_3D.test_definition import ITest, EllipticPolynomialProblem, ProblemType
 from pypolydim import gedim, polydim
 from pypolydim.assembler_utilities import assembler_utilities
 from Elliptic_PCC_3D.assembler import Assembler
@@ -48,13 +48,14 @@ def export_errors(file_path: str, test_id: int, mesh_type: int, method_id: int, 
                   post_process_data: Assembler.PostProcessData,
                   file_separator = ';') -> None:
 
-    print("{:<5} {:<5} {:<7} {:<5} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"
+    print("{:<30} {:<15} {:<10} {:<5} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"
           .format('Test', 'Mesh', 'Method', 'Order', 'Cell3Ds', 'DOFs',
                   'Strongs', 'h', 'errorL2',  'errorH1', 'normL2', 'normH1', 'residual'))
 
     print(
-        "{:<5d} {:<5d} {:<7d} {:<5d} {:<10d} {:<10d} {:<10d} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e}"
-        .format(test_id, mesh_type, method_id, method_order, mesh.cell3_d_total_number(),
+        "{:<30s} {:<15s} {:<10s} {:<5d} {:<10d} {:<10d} {:<10d} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e}"
+        .format(ProblemType(test_id).name, polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_3D(mesh_type).name,
+                polydim.pde_tools.local_space_pcc_3_d.MethodTypes(method_id).name, method_order, mesh.cell3_d_total_number(),
                 count_do_fs_data.num_total_do_fs, count_do_fs_data.num_total_strongs,
                 post_process_data.mesh_size, post_process_data.error_l2, post_process_data.error_h1,
                 post_process_data.norm_l2, post_process_data.norm_h1, post_process_data.residual_norm))

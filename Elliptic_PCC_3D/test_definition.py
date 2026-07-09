@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from pypolydim import polydim
+from enum import Enum
 
 class ITest(ABC):
 
@@ -37,6 +38,9 @@ class ITest(ABC):
     @abstractmethod
     def exact_derivative_solution(self, points: np.ndarray):
         pass
+
+class ProblemType(Enum):
+    EllipticPolynomialProblem = 1
 
 class EllipticPolynomialProblem(ITest):
 

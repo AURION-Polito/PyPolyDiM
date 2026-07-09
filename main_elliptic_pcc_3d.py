@@ -12,16 +12,18 @@ import cProfile
 def main():
 
     parser =argparse.ArgumentParser()
-    parser.add_argument('-order','--method-order',dest='method_order', default=2, type=int, help="Method order")
-    parser.add_argument('-method','--method-type',dest='method_type', default=1, type=int, help="Method type")
-    parser.add_argument('-test', '--test-id', dest='test_id', default=1, type=int, help="Test type")
-    parser.add_argument('-mesh', '--mesh-type', dest='mesh_type', default=0, type=int, help="Mesh type")
-    parser.add_argument('-tol1', '--tolerance-1-d', dest='tolerance1_d', default=1.0e-12, type=float, help="Geometric Tolerance 1D")
-    parser.add_argument('-tol2', '--tolerance-2-d', dest='tolerance2_d', default=1.0e-14, type=float, help="Geometric Tolerance 2D")
-    parser.add_argument('-tol3', '--tolerance-3-d', dest='tolerance3_d', default=1.0e-15, type=float, help="Geometric Tolerance 3D")
-    parser.add_argument('-volume', '--mesh-max-relative-volume', dest='max_relative_volume', default=0.01, type=float, help="Mesh max relative volume")
-    parser.add_argument('-export', '--export-path', dest='export_path', default='./Export/Elliptic_PCC_3D', type=str, help="Export Path")
-    parser.add_argument('-import', '--import-path', dest='import_path', default='./', type=str, help="Mesh Import Path")
+    parser.add_argument('-order','--method-order',dest='method_order', default=1, type=int, help="Method order (Default: 1)")
+    parser.add_argument('-method','--method-type',dest='method_type', default=1, type=int, help="Method Type, 0 - FEM_PCC; 1 - EVem; 2 - EVem_Inertia; 3 - "
+                                           "EVem_Ortho (Default: 0)")
+    parser.add_argument('-test', '--test-id', dest='test_id', default=1, type=int, help="Test type: 1 - EllipticPolynomialProblem (Default: 1)")
+    parser.add_argument('-mesh', '--mesh-type', dest='mesh_type', default=0, type=int, help=" Mesh 3D generator type, 0 - Tetrahedral; 1 - Minimal; 2 - "
+            "Polyhedral; 3 - OVMImporter; 4 - VtkImporter; 5 - CsvImporter; 6 - Cubic (Default: 0)")
+    parser.add_argument('-tol1', '--tolerance-1-d', dest='tolerance1_d', default=1.0e-12, type=float, help="Geometric Tolerance 1D (Default: 1.0e-12)")
+    parser.add_argument('-tol2', '--tolerance-2-d', dest='tolerance2_d', default=1.0e-14, type=float, help="Geometric Tolerance 2D (Default: 1.0e-14)")
+    parser.add_argument('-tol3', '--tolerance-3-d', dest='tolerance3_d', default=1.0e-15, type=float, help="Geometric Tolerance 3D (Default: 1.0e-15)")
+    parser.add_argument('-volume', '--mesh-max-relative-volume', dest='max_relative_volume', default=0.01, type=float, help="Mesh max relative volume (Default: 0.01)")
+    parser.add_argument('-export', '--export-path', dest='export_path', default='./Export/Elliptic_PCC_3D', type=str, help="Export Path (Default: './Export/Elliptic_PCC_3D')")
+    parser.add_argument('-import', '--import-path', dest='import_path', default='./', type=str, help="Mesh Import Path (Default: './')")
     args = parser.parse_args()
 
     export_path = args.export_path

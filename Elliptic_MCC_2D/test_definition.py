@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from enum import Enum
+
 import numpy as np
 from pypolydim import polydim
 
@@ -60,6 +62,9 @@ class ITest(ABC):
     @abstractmethod
     def exact_velocity(self, points: np.ndarray):
         pass
+
+class ProblemType(Enum):
+    EllipticPolynomialProblem = 1
 
 class EllipticPolynomialProblem(ITest):
 
