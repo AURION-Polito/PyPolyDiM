@@ -1,7 +1,7 @@
 from Elliptic_PCC_3D.test_definition import ITest, EllipticPolynomialProblem, ProblemType
 from pypolydim import gedim, polydim
 from pypolydim.assembler_utilities import assembler_utilities
-from Elliptic_PCC_3D.assembler import Assembler
+from Elliptic_PCC_3D.assembler import *
 import os
 
 
@@ -45,15 +45,15 @@ def create_mesh(geometry_utilities: gedim.GeometryUtilities, mesh_utilities: ged
 def export_errors(file_path: str, test_id: int, mesh_type: int, method_id: int, method_order: int,
                   mesh:  gedim.MeshMatricesDAO,
                   count_do_fs_data: assembler_utilities.CountDOFsData,
-                  post_process_data: Assembler.PostProcessData,
+                  post_process_data: PostProcessData,
                   file_separator = ';') -> None:
 
-    print("{:<30} {:<15} {:<10} {:<5} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"
+    print("{:<30} {:<15} {:<20} {:<5} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"
           .format('Test', 'Mesh', 'Method', 'Order', 'Cell3Ds', 'DOFs',
                   'Strongs', 'h', 'errorL2',  'errorH1', 'normL2', 'normH1', 'residual'))
 
     print(
-        "{:<30s} {:<15s} {:<10s} {:<5d} {:<10d} {:<10d} {:<10d} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e}"
+        "{:<30s} {:<15s} {:<20s} {:<5d} {:<10d} {:<10d} {:<10d} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e}"
         .format(ProblemType(test_id).name, polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_3D(mesh_type).name,
                 polydim.pde_tools.local_space_pcc_3_d.MethodTypes(method_id).name, method_order, mesh.cell3_d_total_number(),
                 count_do_fs_data.num_total_do_fs, count_do_fs_data.num_total_strongs,
@@ -74,3 +74,5 @@ def export_errors(file_path: str, test_id: int, mesh_type: int, method_id: int, 
                 count_do_fs_data.num_total_do_fs, file_separator, count_do_fs_data.num_total_strongs, file_separator,
                 post_process_data.mesh_size, file_separator, post_process_data.error_l2, file_separator, post_process_data.error_h1, file_separator,
                 post_process_data.norm_l2, file_separator, post_process_data.norm_h1, file_separator, post_process_data.residual_norm))
+
+    print('\x1b[35m' + "Errors exported in: " + file_name + '\x1b[0m')

@@ -56,7 +56,7 @@ nbformat==5.10.4
 nest-asyncio==1.6.0
 notebook==7.5.7
 notebook_shim==0.2.4
-numpy==2.4.6
+numpy==2.5.1
 packaging==26.2
 pandocfilters==1.5.1
 parso==0.8.7
@@ -71,7 +71,7 @@ pure_eval==0.2.3
 pycparser==3.0
 Pygments==2.20.0
 pyparsing==3.3.2
-pypolydim==3.0.3
+pypolydim==3.0.5
 python-dateutil==2.9.0.post0
 python-json-logger==4.1.0
 PyYAML==6.0.3
@@ -86,6 +86,7 @@ scipy==1.17.1
 Send2Trash==2.1.0
 setuptools==82.0.1
 six==1.17.0
+snakeviz==2.2.2
 soupsieve==2.8.4
 stack-data==0.6.3
 terminado==0.18.1

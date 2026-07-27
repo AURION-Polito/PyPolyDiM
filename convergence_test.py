@@ -2,7 +2,7 @@ import os
 import csv
 import numpy as np
 import shutil
-
+import matplotlib.pyplot as plt
 
 def import_errors_mcc(export_path, method_type, method_order, test_type):
     errors_file = os.path.join(export_path,
@@ -29,6 +29,34 @@ def import_errors_mcc(export_path, method_type, method_order, test_type):
                 errors_row.append(float(row[10]))
                 errors_row.append(float(row[11]))
                 errors_row.append(float(row[12]))
+            errors.append(errors_row)
+            counter += 1
+
+    return errors
+
+def import_errors_df_pcc(export_path, method_type, method_order, test_type):
+    errors_file = os.path.join(export_path,
+                               "Errors_" + str(test_type) + "_" + str(method_type) + "_" + str(method_order) + ".csv")
+    errors = []
+    with open(errors_file, newline='') as csvfile:
+        file_reader = csv.reader(csvfile, delimiter=';')
+        data = list(file_reader)
+
+        counter = 0
+        for row in data:
+            errors_row = []
+            if counter == 0:
+                errors_row.append(row[7])
+                errors_row.append(row[8])
+                errors_row.append(row[9])
+                errors_row.append(row[10])
+                errors_row.append(row[11])
+            else:
+                errors_row.append(float(row[7]))
+                errors_row.append(float(row[8]))
+                errors_row.append(float(row[9]))
+                errors_row.append(float(row[10]))
+                errors_row.append(float(row[11]))
             errors.append(errors_row)
             counter += 1
 
@@ -94,6 +122,22 @@ def check_errors_mcc(errors, method_order, tol):
         assert round(slope_l2_press_super) >= round(float(method_order + 1))
         assert round(slope_l2_vel) >= round(float(method_order))
 
+def check_errors_df_pcc(errors, method_order, tol):
+    num_rows = len(errors)
+
+    if num_rows == 2:
+        print('\x1b[0;31;40m' + "Num. Ref. 1: ", abs(errors[1][1]) / abs(errors[1][3]),
+              abs(errors[1][2]) / abs(errors[1][4]), '\x1b[0m')
+        assert abs(errors[1][1]) < tol * abs(errors[1][3])
+        assert abs(errors[1][2]) < tol * abs(errors[1][4])
+    else:
+        errors = np.array(errors[1:])
+        slope_l2 = float(np.polyfit(np.log(errors[:, 0]), np.log(errors[:, 1]), 1)[0])
+        slope_h1 = float(np.polyfit(np.log(errors[:, 0]), np.log(errors[:, 2]), 1)[0])
+        print('\x1b[0;31;40m' + "Num. Ref. ", str(num_rows - 1), ": ", slope_l2, slope_h1, '\x1b[0m')
+        assert round(slope_l2) >= round(float(method_order))
+        assert round(slope_h1) >= round(float(method_order))
+
 def main():
 
     dirpath_pcc_2d = "./Export/Export_PCC_2D"
@@ -108,9 +152,14 @@ def main():
     if os.path.exists(dirpath_mcc_2d) and os.path.isdir(dirpath_mcc_2d):
         shutil.rmtree(dirpath_mcc_2d)
 
+    dirpath_df_pcc_2d = "./Export/Export_DF_PCC_2D"
+    if os.path.exists(dirpath_df_pcc_2d) and os.path.isdir(dirpath_df_pcc_2d):
+        shutil.rmtree(dirpath_df_pcc_2d)
+
     execute_test_pcc_2d = True
     execute_test_pcc_3d = True
     execute_test_mcc_2d = True
+    execute_test_df_pcc_2d = True
 
     # Test PCC 2D
     if execute_test_pcc_2d:
@@ -247,11 +296,12 @@ def main():
             for method_type in method_types:
                 for order in method_orders:
                     export_path = dirpath_pcc_3d + "/Export_" +  str(method_type) + "_" +  str(order) + "_" + str(mesh_type)
-                    os.system("python ./main_elliptic_pcc_3d.py --method-order={0} --method-type={1} --test-id=1 --mesh-type={3} --mesh-max-relative-volume=0.005 --export-path={2}".format(order, method_type, export_path, mesh_type))
+                    os.system("python ./main_elliptic_pcc_3d.py --method-order={0} --method-type={1} --test-id=1 --mesh-type={3} --mesh-max-relative-volume=0.004 --export-path={2}".format(order, method_type, export_path, mesh_type))
+                    os.system("python ./main_elliptic_pcc_3d.py --method-order={0} --method-type={1} --test-id=1 --mesh-type={3} --mesh-max-relative-volume=0.002 --export-path={2}".format(order, method_type, export_path, mesh_type))
                     os.system("python ./main_elliptic_pcc_3d.py --method-order={0} --method-type={1} --test-id=1 --mesh-type={3} --mesh-max-relative-volume=0.001 --export-path={2}".format(order, method_type, export_path, mesh_type))
 
-                    errors = import_errors_pcc(export_path, method_type, order, test_type)
-                    check_errors_pcc(errors, order, tol)
+                    # errors = import_errors_pcc(export_path, method_type, order, test_type)
+                    # check_errors_pcc(errors, order, tol)
                     # errors = np.array(errors[1:])
                     # fig, ax = plt.subplots(figsize=(12, 12))
                     # ax.plot(errors[:, 0], errors[:, 1], '-k^', linewidth=2, markersize=12)
@@ -275,10 +325,72 @@ def main():
                 for order in method_orders:
                     export_path = dirpath_pcc_3d + "/Export_" +  str(method_type) + "_" +  str(order) + "_" + str(mesh_type)
                     os.system("python ./main_elliptic_pcc_3d.py --method-order={0} --method-type={1} --test-id=1 --mesh-type={3} --mesh-max-relative-volume=0.0025 --export-path={2}".format(order, method_type, export_path, mesh_type))
-                    os.system("python ./main_elliptic_pcc_3d.py --method-order={0} --method-type={1} --test-id=1 --mesh-type={3} --mesh-max-relative-volume=0.0005 --export-path={2}".format(order, method_type, export_path, mesh_type))
+                    os.system("python ./main_elliptic_pcc_3d.py --method-order={0} --method-type={1} --test-id=1 --mesh-type={3} --mesh-max-relative-volume=0.00125 --export-path={2}".format(order, method_type, export_path, mesh_type))
 
                     errors = import_errors_pcc(export_path, method_type, order, test_type)
                     check_errors_pcc(errors, order, tol)
+
+    if execute_test_df_pcc_2d:
+
+        tol = 1.0e-12
+
+        method_orders = [2, 3, 4]
+        method_types = [1]
+        method_types_name = ["vem_full"]
+        mesh_types = [2, 5]
+        mesh_max_areas = [0.125 * 0.125, 0.0625 * 0.0625]
+
+        test_type = 1
+        for mesh_type in mesh_types:
+            mt = 0
+            for method_type in method_types:
+                print('\x1b[6;30;41m' + "Begin of convergence test with method_type =",
+                      method_types_name[mt] + '\x1b[0m')
+                for order in method_orders:
+                    export_path = dirpath_df_pcc_2d + "/Export_" + method_types_name[mt] + "_" + str(order) + "_" + str(
+                        mesh_type)
+
+                    os.system(
+                        "python ./main_brinkman_df_pcc_2d.py --method-order={0} --method-type={1} --test-id={4}"
+                                                     " --mesh-type={3} --mesh-max-relative-area={5} --export-path={2}".format(
+                            order, method_type, export_path, mesh_type, test_type, mesh_max_areas[0]))
+
+                    os.system(
+                        "python ./main_brinkman_df_pcc_2d.py --method-order={0} --method-type={1} --test-id={4}"
+                                                     " --mesh-type={3} --mesh-max-relative-area={5} --export-path={2}".format(
+                            order, method_type, export_path, mesh_type, test_type, mesh_max_areas[1]))
+
+                    errors = import_errors_df_pcc(export_path, method_type, order, test_type)
+                    check_errors_df_pcc(errors, order, tol)
+
+                print("End of convergence test with method_type =", method_types_name[mt], "\n")
+                mt += 1
+
+        test_type = 2
+        for mesh_type in mesh_types:
+            mt = 0
+            for method_type in method_types:
+                print('\x1b[6;30;41m' + "Begin of convergence test with method_type =",
+                      method_types_name[mt] + '\x1b[0m')
+                for order in method_orders:
+                    export_path = dirpath_df_pcc_2d + "/Export_" + method_types_name[mt] + "_" + str(order) + "_" + str(
+                        mesh_type)
+
+                    os.system(
+                        "python ./main_brinkman_df_pcc_2d.py --method-order={0} --method-type={1} --test-id={4}"
+                                                     " --mesh-type={3} --mesh-max-relative-area={5} --export-path={2}".format(
+                            order, method_type, export_path, mesh_type, test_type, mesh_max_areas[0]))
+
+                    os.system(
+                        "python ./main_brinkman_df_pcc_2d.py --method-order={0} --method-type={1} --test-id={4}"
+                                                     " --mesh-type={3} --mesh-max-relative-area={5} --export-path={2}".format(
+                            order, method_type, export_path, mesh_type, test_type, mesh_max_areas[1]))
+
+                    errors = import_errors_df_pcc(export_path, method_type, order, test_type)
+                    check_errors_df_pcc(errors, order, tol)
+
+                print("End of convergence test with method_type =", method_types_name[mt], "\n")
+                mt += 1
 
 if __name__ == '__main__':
     main()

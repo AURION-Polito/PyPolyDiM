@@ -1,9 +1,8 @@
 import argparse
 import os.path
 
-from pypolydim import polydim, gedim
 from Elliptic_PCC_3D.program_utilities import create_test, create_mesh, export_errors
-from Elliptic_PCC_3D.assembler import Assembler
+from Elliptic_PCC_3D.assembler import *
 from pypolydim.export_vtk_utilities import ExportVTKUtilities
 from pypolydim.assembler_utilities import assembler_utilities
 import cProfile
@@ -13,7 +12,7 @@ def main():
 
     parser =argparse.ArgumentParser()
     parser.add_argument('-order','--method-order',dest='method_order', default=1, type=int, help="Method order (Default: 1)")
-    parser.add_argument('-method','--method-type',dest='method_type', default=1, type=int, help="Method Type, 0 - FEM_PCC; 1 - EVem; 2 - EVem_Inertia; 3 - "
+    parser.add_argument('-method','--method-type',dest='method_type', default=0, type=int, help="Method Type, 0 - FEM_PCC; 1 - EVem; 2 - EVem_Inertia; 3 - "
                                            "EVem_Ortho (Default: 0)")
     parser.add_argument('-test', '--test-id', dest='test_id', default=1, type=int, help="Test type: 1 - EllipticPolynomialProblem (Default: 1)")
     parser.add_argument('-mesh', '--mesh-type', dest='mesh_type', default=0, type=int, help=" Mesh 3D generator type, 0 - Tetrahedral; 1 - Minimal; 2 - "
@@ -25,6 +24,9 @@ def main():
     parser.add_argument('-export', '--export-path', dest='export_path', default='./Export/Elliptic_PCC_3D', type=str, help="Export Path (Default: './Export/Elliptic_PCC_3D')")
     parser.add_argument('-import', '--import-path', dest='import_path', default='./', type=str, help="Mesh Import Path (Default: './')")
     args = parser.parse_args()
+
+    pr = cProfile.Profile()
+    pr.enable()
 
     export_path = args.export_path
     if not os.path.exists(export_path):
@@ -39,12 +41,6 @@ def main():
     method_type = polydim.pde_tools.local_space_pcc_3_d.MethodTypes(args.method_type)
     method_order = args.method_order
 
-    print("Set problem...")
-    test = create_test(args.test_id)
-    pde_domain = test.domain()
-    boundary_info = test.boundary_info()
-
-    print("Create mesh...")
     geometry_utilities_config = gedim.GeometryUtilitiesConfig()
     geometry_utilities_config.tolerance1_d = args.tolerance1_d
     geometry_utilities_config.tolerance2_d = args.tolerance2_d
@@ -53,13 +49,19 @@ def main():
     mesh_utilities = gedim.MeshUtilities()
     vtk_utilities = ExportVTKUtilities()
 
+    print("Set problem...")
+    test = create_test(args.test_id)
+    pde_domain = test.domain()
+    boundary_info = test.boundary_info()
+
+    print("Create mesh...")
     mesh_data = gedim.MeshMatrices()
     mesh = gedim.MeshMatricesDAO(mesh_data)
-
     create_mesh(geometry_utilities, mesh_utilities, mesh_type, args.max_relative_volume, args.import_path, pde_domain, mesh)
 
     print("Export Mesh...")
     vtk_utilities.export_mesh(export_mesh_path, mesh)
+    print('\x1b[35m' + "Mesh exported in: " + export_mesh_path + '\x1b[0m')
 
     print("Compute Geometric Properties...")
     mesh_geometric_data = polydim.pde_tools.mesh.pde_mesh_utilities.compute_mesh_3_d_geometry_data(geometry_utilities, mesh)
@@ -78,49 +80,45 @@ def main():
 
     print('\x1b[6;30;42m' + "Created discrete space with ", do_fs_data.number_do_fs, " DOFs and ", do_fs_data.number_strongs, " STRONG" + '\x1b[0m')
     print("Assemble...")
-    assembler = Assembler()
-    assembler_data = assembler.assemble(geometry_utilities_config,
-                                        mesh,
-                                        mesh_geometric_data,
-                                        mesh_do_fs_info,
-                                        do_fs_data,
-                                        do_fs_data_indices,
-                                        reference_element_data,
-                                        test)
+    assembler_data = assemble(geometry_utilities_config,
+                              mesh,
+                              mesh_geometric_data,
+                              mesh_do_fs_info,
+                              do_fs_data,
+                              do_fs_data_indices,
+                              reference_element_data,
+                              test)
 
     print("Solve...")
-    assembler.solve(do_fs_data, assembler_data)
+    solve(do_fs_data, assembler_data)
 
     print("Compute Errors...")
-    post_process_data = assembler.post_process_solution(geometry_utilities_config,
-                                                        mesh,
-                                                        mesh_geometric_data,
-                                                        do_fs_data,
-                                                        do_fs_data_indices,
-                                                        count_do_fs_data,
-                                                        reference_element_data,
-                                                        assembler_data,
-                                                        test)
+    post_process_data = post_process_solution(geometry_utilities_config,
+                                              mesh,
+                                              mesh_geometric_data,
+                                              do_fs_data,
+                                              do_fs_data_indices,
+                                              count_do_fs_data,
+                                              reference_element_data,
+                                              assembler_data,
+                                              test)
 
-    print("Export Solution...")
+    print("Export Solution and Errors...")
 
     export_errors(export_path, args.test_id, args.mesh_type, args.method_type, args.method_order, mesh, count_do_fs_data, post_process_data)
-
-    vtk_utilities.export_solution_3(export_path + '/Solution_' + str(args.test_id) + '_' + str(args.method_type)
-                                    + '_' + str(method_order), mesh, post_process_data.cell0_ds_numeric,
+    file_name = export_path + '/Solution_' + str(args.test_id) + '_' + str(args.method_type) + '_' + str(method_order)
+    vtk_utilities.export_solution_3(file_name, mesh, post_process_data.cell0_ds_numeric,
                                     cell0_d_exact_solution=post_process_data.cell0_ds_exact,
                                     cell3_ds_error_l2=post_process_data.cell3_ds_error_l2,
                                     cell3_ds_error_h1=post_process_data.cell3_ds_error_h1)
+    print('\x1b[35m' + "Solution exported in: " + file_name + ".vtu" + '\x1b[0m')
+
+    pr.disable()
+    pr.dump_stats(export_path + "/program.prof")  # call "snakeviz program.proof" from command line to visualize the result
 
     print('\x1b[6;30;42m' + "Finish" + '\x1b[0m')
+
 if __name__=='__main__':
 
-    export_file_path = "./Export"
-    if not os.path.exists(export_file_path):
-        os.makedirs(export_file_path)
-
-    pr = cProfile.Profile()
-    pr.enable()
     main()
-    pr.disable()
-    pr.dump_stats("./Export/program.prof")  # call "snakeviz program.proof" from command line to visualize the result
+
