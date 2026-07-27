@@ -12,7 +12,7 @@ def main():
 
     parser =argparse.ArgumentParser()
     parser.add_argument('-order','--method-order',dest='method_order', default=1, type=int, help="Method order (Default: 1)")
-    parser.add_argument('-method','--method-type',dest='method_type', default=1, type=int, help="Method type 0 - FEM; 1 - EVem; 2 - EVem_Inertia; 3 - EVem_Ortho; "
+    parser.add_argument('-method','--method-type',dest='method_type', default=0, type=int, help="Method type 0 - FEM; 1 - VEM_PCC; 2 - VEM_PCC_Inertia; 3 - VEM_PCC_Ortho; "
                                            "4 - ZFEM (Default: 0)")
     parser.add_argument('-test', '--test-id', dest='test_id', default=1, type=int, help="Test type, 1 - EllipticPolynomialProblem (Default: 1)")
     parser.add_argument('-mesh', '--mesh-type', dest='mesh_type', default=0, type=int, help="Mesh type, 0 - Triangular; 1 - Minimal; 2 - "

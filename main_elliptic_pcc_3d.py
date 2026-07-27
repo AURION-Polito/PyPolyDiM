@@ -12,8 +12,8 @@ def main():
 
     parser =argparse.ArgumentParser()
     parser.add_argument('-order','--method-order',dest='method_order', default=1, type=int, help="Method order (Default: 1)")
-    parser.add_argument('-method','--method-type',dest='method_type', default=0, type=int, help="Method Type, 0 - FEM_PCC; 1 - EVem; 2 - EVem_Inertia; 3 - "
-                                           "EVem_Ortho (Default: 0)")
+    parser.add_argument('-method','--method-type',dest='method_type', default=0, type=int, help="Method Type, 0 - FEM_PCC; 1 - VEM_PCC; 2 - VEM_PCC_Inertia; 3 - "
+                                           "VEM_PCC_Ortho (Default: 0)")
     parser.add_argument('-test', '--test-id', dest='test_id', default=1, type=int, help="Test type: 1 - EllipticPolynomialProblem (Default: 1)")
     parser.add_argument('-mesh', '--mesh-type', dest='mesh_type', default=0, type=int, help=" Mesh 3D generator type, 0 - Tetrahedral; 1 - Minimal; 2 - "
             "Polyhedral; 3 - OVMImporter; 4 - VtkImporter; 5 - CsvImporter; 6 - Cubic (Default: 0)")
