@@ -384,7 +384,6 @@ def post_process_solution(geometry_utilities_config: gedim.GeometryUtilitiesConf
     result.cell2_ds_norm_h1_velocity = np.zeros([mesh.cell2_d_total_number()])
     result.mesh_size = 0.0
 
-    assembler_utilities_obj = assembler_utilities()
     for c in range(mesh.cell2_d_total_number()):
 
         local_space_data = polydim.pde_tools.local_space_df_pcc_2_d.create_local_space(geometry_utilities_config.tolerance1_d,
@@ -403,8 +402,8 @@ def post_process_solution(geometry_utilities_config: gedim.GeometryUtilitiesConf
         exact_pressure_values = test.exact_pressure(cell2_d_internal_quadrature.points)
         exact_velocity_derivatives_values = test.exact_derivatives_velocity(cell2_d_internal_quadrature.points)
 
-        local_count_do_fs = assembler_utilities_obj.local_count_do_fs(2, c, do_fs_data)
-        do_fs_values = assembler_utilities_obj.global_solution_to_local_solution(2,
+        local_count_do_fs = assembler_utilities.local_count_do_fs(2, c, do_fs_data)
+        do_fs_values = assembler_utilities.global_solution_to_local_solution(2,
                                                                                  c,
                                                                                  do_fs_data_indices,
                                                                                  count_do_fs_data,

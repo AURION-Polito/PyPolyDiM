@@ -1,7 +1,17 @@
+# _LICENSE_HEADER_
+#
+# Copyright (C) 2026.
+# Terms register on the GPL-3.0 license.
+#
+# This file can be redistributed and/or modified under the license terms.
+#
+# See top level LICENSE file for more details.
+#
+# This file can be used citing references in CITATION.cff file.
+
 import argparse
 import os.path
 
-from pypolydim import polydim, gedim
 from Elliptic_MCC_2D.program_utilities import create_test, create_mesh, export_errors
 from Elliptic_MCC_2D.assembler import *
 from pypolydim.export_vtk_utilities import ExportVTKUtilities
@@ -46,8 +56,6 @@ def main():
     geometry_utilities_config.tolerance1_d = args.tolerance1_d
     geometry_utilities_config.tolerance2_d = args.tolerance2_d
     geometry_utilities = gedim.GeometryUtilities(geometry_utilities_config)
-    mesh_utilities = gedim.MeshUtilities()
-    vtk_utilities = ExportVTKUtilities()
 
     print("Set problem...")
     test = create_test(args.test_id)
@@ -57,14 +65,14 @@ def main():
     print("Create mesh...")
     mesh_data = gedim.MeshMatrices()
     mesh = gedim.MeshMatricesDAO(mesh_data)
-    create_mesh(geometry_utilities, mesh_utilities, mesh_type, args.max_relative_area, args.import_path, pde_domain, mesh)
+    create_mesh(geometry_utilities, mesh_type, args.max_relative_area, args.import_path, pde_domain, mesh)
 
     print("Export Mesh...")
-    vtk_utilities.export_mesh(export_mesh_path, mesh)
+    ExportVTKUtilities.export_mesh(export_mesh_path, mesh)
     print('\x1b[35m' + "Mesh exported in: " + export_mesh_path + '\x1b[0m')
 
     print("Compute Geometric Properties...")
-    mesh_geometric_data = polydim.pde_tools.mesh.pde_mesh_utilities.compute_mesh_2_d_geometry_data(geometry_utilities, mesh_utilities, mesh)
+    mesh_geometric_data = polydim.pde_tools.mesh.pde_mesh_utilities.compute_mesh_2_d_geometry_data(geometry_utilities, mesh)
 
     print("Create Discrete Local Space...")
     reference_element_data = polydim.pde_tools.local_space_mcc_2_d.create_reference_element(method_type, method_order)
@@ -127,7 +135,7 @@ def main():
                  "Error L2 Velocity": post_process_data.cell2_ds_error_l2_velocity}
 
     file_name = export_path + '/Solution_' + str(args.test_id) + '_' + str(args.method_type) + '_' + str(method_order)
-    vtk_utilities.export_cells2_d(file_name, mesh, point_data=point_data, cell_data=cell_data)
+    ExportVTKUtilities.export_cells2_d(file_name, mesh, point_data=point_data, cell_data=cell_data)
     print('\x1b[35m' + "Solution exported in: " + file_name + ".vtu" + '\x1b[0m')
 
     pr.disable()

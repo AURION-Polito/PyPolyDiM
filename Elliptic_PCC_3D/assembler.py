@@ -1,3 +1,15 @@
+# _LICENSE_HEADER_
+#
+# Copyright (C) 2026.
+# Terms register on the GPL-3.0 license.
+#
+# This file can be redistributed and/or modified under the license terms.
+#
+# See top level LICENSE file for more details.
+#
+# This file can be used citing references in CITATION.cff file.
+
+
 import numpy as np
 from pypolydim import polydim, gedim
 from Elliptic_PCC_3D.test_definition import ITest
@@ -386,10 +398,9 @@ def post_process_solution(geometry_utilities_confi: gedim.GeometryUtilitiesConfi
         exact_solution_values = test.exact_solution(cell3_d_internal_quadrature.points)
         exact_derivative_solution_values = test.exact_derivative_solution(cell3_d_internal_quadrature.points)
 
-        assembler_utilities_obj = assembler_utilities()
-        local_count_do_fs = assembler_utilities_obj.local_count_do_fs(3, c, [do_fs_data])
+        local_count_do_fs = assembler_utilities.local_count_do_fs(3, c, [do_fs_data])
 
-        do_fs_values = assembler_utilities_obj.global_solution_to_local_solution(3,
+        do_fs_values = assembler_utilities.global_solution_to_local_solution(3,
                                                                                  c,
                                                                                  [do_fs_data_indices],
                                                                                  count_do_fs_data,

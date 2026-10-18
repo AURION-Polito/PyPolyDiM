@@ -24,7 +24,7 @@ def create_test(test_id: int) -> ITest:
             raise ValueError("not valid test id")
 
 
-def create_mesh(geometry_utilities: gedim.GeometryUtilities, mesh_utilities: gedim.MeshUtilities,
+def create_mesh(geometry_utilities: gedim.GeometryUtilities,
                 mesh_type: polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_2D,
                 mesh_max_relative_area: float, import_path: str,
                 pde_domain: polydim.pde_tools.mesh.pde_mesh_utilities.PDE_Domain_2D,
@@ -37,7 +37,6 @@ def create_mesh(geometry_utilities: gedim.GeometryUtilities, mesh_utilities: ged
         polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_2D.random_distorted == mesh_type):
 
         polydim.pde_tools.mesh.pde_mesh_utilities.create_mesh_2_d(geometry_utilities,
-                                                                  mesh_utilities,
                                                                   mesh_type,
                                                                   pde_domain,
                                                                   mesh_max_relative_area,
@@ -47,7 +46,6 @@ def create_mesh(geometry_utilities: gedim.GeometryUtilities, mesh_utilities: ged
             polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_2D.off_importer == mesh_type):
 
         polydim.pde_tools.mesh.pde_mesh_utilities.import_mesh_2_d(geometry_utilities,
-                                                                  mesh_utilities,
                                                                   mesh_type,
                                                                   import_path,
                                                                   mesh)

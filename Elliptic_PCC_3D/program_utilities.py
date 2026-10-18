@@ -1,6 +1,16 @@
-from Elliptic_PCC_3D.test_definition import ITest, EllipticPolynomialProblem, ProblemType
-from pypolydim import gedim, polydim
-from pypolydim.assembler_utilities import assembler_utilities
+# _LICENSE_HEADER_
+#
+# Copyright (C) 2026.
+# Terms register on the GPL-3.0 license.
+#
+# This file can be redistributed and/or modified under the license terms.
+#
+# See top level LICENSE file for more details.
+#
+# This file can be used citing references in CITATION.cff file.
+
+
+from Elliptic_PCC_3D.test_definition import EllipticPolynomialProblem, ProblemType
 from Elliptic_PCC_3D.assembler import *
 import os
 
@@ -13,7 +23,7 @@ def create_test(test_id: int) -> ITest:
         case _:
             raise ValueError("not valid test id")
 
-def create_mesh(geometry_utilities: gedim.GeometryUtilities, mesh_utilities: gedim.MeshUtilities,
+def create_mesh(geometry_utilities: gedim.GeometryUtilities,
                 mesh_type: polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_3D,
                 mesh_max_relative_volume: float, import_path: str,
                 pde_domain: polydim.pde_tools.mesh.pde_mesh_utilities.PDE_Domain_3D,
@@ -25,7 +35,6 @@ def create_mesh(geometry_utilities: gedim.GeometryUtilities, mesh_utilities: ged
             polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_3D.cubic == mesh_type):
 
         polydim.pde_tools.mesh.pde_mesh_utilities.create_mesh_3_d(geometry_utilities,
-                                                                  mesh_utilities,
                                                                   mesh_type,
                                                                   pde_domain,
                                                                   mesh_max_relative_volume,
@@ -35,8 +44,7 @@ def create_mesh(geometry_utilities: gedim.GeometryUtilities, mesh_utilities: ged
           polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_3D.vtk_importer == mesh_type or
             polydim.pde_tools.mesh.pde_mesh_utilities.MeshGenerator_Types_3D.ovm_importer == mesh_type):
 
-        polydim.pde_tools.mesh.pde_mesh_utilities.import_mesh_3_d(mesh_utilities,
-                                                                  mesh_type,
+        polydim.pde_tools.mesh.pde_mesh_utilities.import_mesh_3_d(mesh_type,
                                                                   import_path,
                                                                   mesh)
     else:

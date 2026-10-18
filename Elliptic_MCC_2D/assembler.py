@@ -1,3 +1,15 @@
+# _LICENSE_HEADER_
+#
+# Copyright (C) 2026.
+# Terms register on the GPL-3.0 license.
+#
+# This file can be redistributed and/or modified under the license terms.
+#
+# See top level LICENSE file for more details.
+#
+# This file can be used citing references in CITATION.cff file.
+
+
 import numpy as np
 from pypolydim import polydim, gedim
 from Elliptic_MCC_2D.test_definition import ITest
@@ -267,7 +279,7 @@ def post_process_solution(geometry_utilities_confi: gedim.GeometryUtilitiesConfi
     result.cell2_ds_error_l2_velocity = np.zeros([mesh.cell2_d_total_number()])
     result.cell2_ds_norm_l2_velocity = np.zeros([mesh.cell2_d_total_number()])
 
-    assembler_utilities_obj = assembler_utilities()
+
     for c in range(mesh.cell2_d_total_number()):
 
         local_space_data=polydim.pde_tools.local_space_mcc_2_d.create_local_space(
@@ -284,8 +296,8 @@ def post_process_solution(geometry_utilities_confi: gedim.GeometryUtilitiesConfi
 
         cell2_d_internal_quadrature = polydim.pde_tools.local_space_mcc_2_d.internal_quadrature(reference_element_data, local_space_data)
 
-        local_count_do_fs = assembler_utilities_obj.local_count_do_fs(2, c, do_fs_data)
-        do_fs_values = assembler_utilities_obj.global_solution_to_local_solution(2,
+        local_count_do_fs = assembler_utilities.local_count_do_fs(2, c, do_fs_data)
+        do_fs_values = assembler_utilities.global_solution_to_local_solution(2,
                                                                                  c,
                                                                                  do_fs_data_indices,
                                                                                  count_do_fs_data,
